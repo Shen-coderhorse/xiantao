@@ -1,0 +1,36 @@
+<template>
+  <div class="container">
+    padding: 0 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -0.5px;
+    background: #409eff;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+</style>
+
+<style scoped>
+.container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+</style>
