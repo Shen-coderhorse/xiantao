@@ -1,12 +1,13 @@
 package com.xiantao.entity;
 
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 @TableName("sys_user")
@@ -28,6 +29,8 @@ public class User {
     private Integer status;
 
     private String role;
+
+    private java.math.BigDecimal balance;
 
     private LocalDateTime createTime;
 

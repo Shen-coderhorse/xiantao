@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
@@ -12,6 +12,10 @@ const routes = [
       { path: 'user', name: 'UserCenter', component: () => import('@/views/UserCenter.vue'), meta: { requiresAuth: true } },
       { path: 'my-products', name: 'MyProducts', component: () => import('@/views/MyProducts.vue'), meta: { requiresAuth: true } },
       { path: 'orders', name: 'Orders', component: () => import('@/views/Orders.vue'), meta: { requiresAuth: true } },
+      { path: 'order/:id', name: 'OrderDetail', component: () => import('@/views/OrderDetail.vue'), meta: { requiresAuth: true } },
+      { path: 'address', name: 'AddressManagement', component: () => import('@/views/AddressManagement.vue'), meta: { requiresAuth: true } },
+      { path: 'credit', name: 'CreditDetail', component: () => import('@/views/CreditDetail.vue'), meta: { requiresAuth: true } },
+      { path: 'transactions', name: 'Transactions', component: () => import('@/views/Transactions.vue'), meta: { requiresAuth: true } },
       { path: 'admin/products', name: 'AdminProducts', component: () => import('@/views/AdminProducts.vue'), meta: { requiresAuth: true, requiresAdmin: true } }
     ]
   },
@@ -26,7 +30,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  
+
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     next('/login')
   } else if (to.meta.requiresAdmin && userStore.user?.role !== 'admin') {

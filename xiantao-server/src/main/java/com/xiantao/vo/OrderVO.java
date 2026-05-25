@@ -1,9 +1,9 @@
 package com.xiantao.vo;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import lombok.Data;
 
 @Data
 public class OrderVO {
@@ -31,6 +31,14 @@ public class OrderVO {
     private String buyerName;
 
     private String buyerAvatar;
+
+    private Long addressId;
+
+    private String receiverName;
+
+    private String receiverPhone;
+
+    private String address;
 
     private Integer status;
 

@@ -20,4 +20,8 @@ public interface OrderService extends IService<Order> {
     OrderVO completeOrder(Long userId, Long id);
 
     OrderVO cancelOrder(Long userId, Long id);
+
+    OrderVO shipOrder(Long userId, Long id, com.xiantao.dto.ShipDTO shipDTO);
+
+    OrderVO receiveOrder(Long userId, Long id);
 }

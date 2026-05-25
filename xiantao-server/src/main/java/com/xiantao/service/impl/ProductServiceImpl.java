@@ -1,5 +1,15 @@
 package com.xiantao.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,16 +25,8 @@ import com.xiantao.service.ProductService;
 import com.xiantao.service.UserService;
 import com.xiantao.vo.PageVO;
 import com.xiantao.vo.ProductVO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +48,23 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
             wrapper.like(Product::getTitle, query.getKeyword());
         }
 
-        wrapper.orderByDesc(Product::getCreateTime);
+        if (query.getMinPrice() != null) {
+            wrapper.ge(Product::getPrice, query.getMinPrice());
+        }
+
+        if (query.getMaxPrice() != null) {
+            wrapper.le(Product::getPrice, query.getMaxPrice());
+        }
+
+        if ("price_asc".equals(query.getSortBy())) {
+            wrapper.orderByAsc(Product::getPrice);
+        } else if ("price_desc".equals(query.getSortBy())) {
+            wrapper.orderByDesc(Product::getPrice);
+        } else if ("time_asc".equals(query.getSortBy())) {
+            wrapper.orderByAsc(Product::getCreateTime);
+        } else {
+            wrapper.orderByDesc(Product::getCreateTime);
+        }
 
         Page<Product> page = new Page<>(query.getPageNum(), query.getPageSize());
         this.page(page, wrapper);
@@ -154,7 +172,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     }
 
     @Override
-    public Page<ProductVO> getAdminProductList(Integer pageNum, Integer pageSize, Long categoryId, Integer status, String keyword) {
+    public Page<ProductVO> getAdminProductList(Integer pageNum, Integer pageSize, Long categoryId, Integer status,
+            String keyword) {
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
 
         if (categoryId != null) {
@@ -245,6 +264,40 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         product.setStatus(status);
         product.setUpdateTime(LocalDateTime.now());
         this.updateById(product);
+    }
+
+    @Override
+    public List<ProductVO> getNearbyProducts(ProductQueryDTO query) {
+        if (query.getLatitude() == null || query.getLongitude() == null) {
+            throw new BusinessException("请提供经纬度信息");
+        }
+
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Product::getStatus, 1);
+
+        if (query.getCategoryId() != null) {
+            wrapper.eq(Product::getCategoryId, query.getCategoryId());
+        }
+
+        if (StringUtils.hasText(query.getKeyword())) {
+            wrapper.like(Product::getTitle, query.getKeyword());
+        }
+
+        if (query.getMinPrice() != null) {
+            wrapper.ge(Product::getPrice, query.getMinPrice());
+        }
+
+        if (query.getMaxPrice() != null) {
+            wrapper.le(Product::getPrice, query.getMaxPrice());
+        }
+
+        wrapper.orderByDesc(Product::getCreateTime);
+
+        List<Product> products = this.list(wrapper);
+
+        return products.stream()
+                .map(this::convertToVO)
+                .collect(Collectors.toList());
     }
 
     private ProductVO convertToVO(Product product) {

@@ -8,4 +8,7 @@ public class OrderCreateDTO {
 
     @NotNull(message = "商品ID不能为空")
     private Long productId;
+
+    @NotNull(message = "收货地址ID不能为空")
+    private Long addressId;
 }

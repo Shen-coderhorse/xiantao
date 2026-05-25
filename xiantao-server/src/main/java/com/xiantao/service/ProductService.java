@@ -1,5 +1,7 @@
 package com.xiantao.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xiantao.dto.ProductDTO;
@@ -22,7 +24,8 @@ public interface ProductService extends IService<Product> {
 
     PageVO<ProductVO> getMyProducts(Long userId, ProductQueryDTO query);
 
-    Page<ProductVO> getAdminProductList(Integer pageNum, Integer pageSize, Long categoryId, Integer status, String keyword);
+    Page<ProductVO> getAdminProductList(Integer pageNum, Integer pageSize, Long categoryId, Integer status,
+            String keyword);
 
     ProductVO adminCreateProduct(ProductDTO dto);
 
@@ -31,4 +34,6 @@ public interface ProductService extends IService<Product> {
     void adminDeleteProduct(Long id);
 
     void adminUpdateStatus(Long id, Integer status);
+
+    List<ProductVO> getNearbyProducts(ProductQueryDTO query);
 }

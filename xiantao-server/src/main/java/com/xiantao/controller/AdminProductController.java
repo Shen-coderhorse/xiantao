@@ -3,17 +3,13 @@ package com.xiantao.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiantao.common.Result;
 import com.xiantao.dto.ProductDTO;
-import com.xiantao.entity.Product;
 import com.xiantao.service.ProductService;
 import com.xiantao.service.UserService;
 import com.xiantao.vo.ProductVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/admin/product")
