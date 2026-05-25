@@ -129,24 +129,13 @@ graph TB
 ### 技术栈全景
 
 ```mermaid
-flowchart TD
-    subgraph Frontend["🎨 前端技术栈"]
-        F1["Vue 3.4"]
-        F2["Vite 5.x"]
-        F3["Element Plus"]
-        F4["Pinia"]
-        F5["Axios"]
-        F6["ECharts 5.4"]
-        F7["uni-app"]
+flowchart TB
+    subgraph Frontend[" 前端技术栈"]
+        F1["Vue 3.4"] ~~~ F2["Vite 5.x"] ~~~ F3["Element Plus"] ~~~ F4["Pinia"] ~~~ F5["Axios"] ~~~ F6["ECharts 5.4"] ~~~ F7["uni-app"]
     end
 
-    subgraph Backend["⚡ 后端技术栈"]
-        B1["Spring Boot 3.2"]
-        B2["Java 21"]
-        B3["MyBatis-Plus"]
-        B4["jjwt 0.12"]
-        B5["BCrypt"]
-        B6["Lombok"]
+    subgraph Backend[" 后端技术栈"]
+        B1["Spring Boot 3.2"] ~~~ B2["Java 21"] ~~~ B3["MyBatis-Plus"] ~~~ B4["jjwt 0.12"] ~~~ B5["BCrypt"] ~~~ B6["Lombok"]
     end
 
     subgraph Storage["💾 存储"]
