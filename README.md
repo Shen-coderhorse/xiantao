@@ -129,7 +129,7 @@ graph TB
 ### 技术栈全景
 
 ```mermaid
-graph LR
+flowchart TD
     subgraph Frontend["🎨 前端技术栈"]
         F1["Vue 3.4"]
         F2["Vite 5.x"]
@@ -153,8 +153,8 @@ graph LR
         S1["MySQL 8.0"]
     end
 
-    Frontend -->|HTTP/REST| Backend
-    Backend -->|JDBC| Storage
+    Frontend ==>|HTTP/REST| Backend
+    Backend ==>|JDBC| Storage
 ```
 
 ---
