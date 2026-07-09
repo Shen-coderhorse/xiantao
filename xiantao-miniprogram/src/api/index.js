@@ -2,6 +2,34 @@ import uni from '@/uni-api'
 
 const BASE_URL = '/api'
 
+/**
+ * 获取图片完整URL
+ * 后端返回的图片路径格式为 /uploads/yyyy/MM/dd/xxx.png
+ */
+export function getImageUrl(url) {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    if (!url.startsWith('/')) url = '/' + url
+    return url
+}
+
+/**
+ * 从逗号分隔的图片字符串中获取第一张图片
+ */
+export function getFirstImage(images) {
+    if (!images) return ''
+    const urls = images.split(',')
+    return getImageUrl(urls[0].trim())
+}
+
+/**
+ * 将逗号分隔的图片字符串转为数组
+ */
+export function getImageList(images) {
+    if (!images) return []
+    return images.split(',').map(url => getImageUrl(url.trim())).filter(url => url)
+}
+
 function request(options) {
     return uni.request({
         url: BASE_URL + options.url,

@@ -11,8 +11,8 @@ import com.xiantao.service.OrderService;
 import com.xiantao.service.TransactionRecordService;
 import com.xiantao.service.UserService;
 import com.xiantao.vo.TransactionRecordVO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +21,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionRecordServiceImpl extends ServiceImpl<TransactionRecordMapper, TransactionRecord> implements TransactionRecordService {
 
     private final OrderService orderService;
     private final UserService userService;
+
+    public TransactionRecordServiceImpl(@Lazy OrderService orderService, UserService userService) {
+        this.orderService = orderService;
+        this.userService = userService;
+    }
 
     @Override
     @Transactional

@@ -40,7 +40,25 @@ mysql -u root -p
 source e:/xiantao/xiantao-server/sql/init.sql
 ```
 
-### 2️⃣ 启动后端
+### 2️⃣ 一键启动所有服务
+
+**Windows (PowerShell 推荐):**
+```powershell
+.\start.ps1
+```
+
+> 也可以双击 `start.bat`，它会调用 `start.ps1` 执行
+
+**Linux/macOS:**
+```bash
+chmod +x start.sh stop.sh
+./start.sh
+```
+
+> 启动脚本会自动检查环境、检测端口冲突、按顺序启动后端和前端服务。
+> 所有服务在同一终端窗口后台运行，不会弹出新窗口。
+
+### 3️⃣ 手动启动（可选）
 
 ```bash
 cd xiantao-server
@@ -49,7 +67,7 @@ mvn spring-boot:run
 
 > 后端默认运行在 `http://localhost:8080`
 
-### 3️⃣ 启动前端
+### 4️⃣ 启动前端
 
 **网页端：**
 
@@ -70,6 +88,22 @@ cd xiantao-admin && npm install && npm run dev
 ```bash
 cd xiantao-miniprogram && npm install && npm run dev:h5
 ```
+
+### 5️⃣ 一键关闭所有服务
+
+**Windows (PowerShell 推荐):**
+```powershell
+.\stop.ps1
+```
+
+> 也可以双击 `stop.bat`
+
+**Linux/macOS:**
+```bash
+./stop.sh
+```
+
+> 关闭脚本会按顺序停止所有服务，使用进程树杀确保子进程全部清理，避免端口占用
 
 ### 🔑 测试账号
 
@@ -200,15 +234,15 @@ flowchart TD
 stateDiagram-v2
     [*] --> 待付款: 创建订单
     待付款 --> 已取消: 取消订单
-    待付款 --> 已付款: 买家付款
-    已付款 --> 已取消: 申请退款
-    已付款 --> 已完成: 确认收货
+    待付款 --> 待发货: 买家付款
+    待发货 --> 已取消: 取消退款
+    待发货 --> 已完成: 确认收货
     已完成 --> 评价: 买卖双方互评
     已取消 --> [*]
     评价 --> [*]
 
     note right of 待付款: 等待买家支付
-    note right of 已付款: 资金托管中<br/>卖家可发货
+    note right of 待发货: 资金托管中<br/>卖家可发货
     note right of 已完成: 资金已解冻<br/>交易成功
     note right of 已取消: 资金已退还<br/>交易关闭
 ```
@@ -439,7 +473,7 @@ mindmap
 | ⭐ 评价     | 买卖互评、信用评分      | `UserRatingController`                | `UserRatingService`        | ✅    |
 | 📍 地址     | 收货地址管理            | `AddressController`                   | `AddressService`           | ✅    |
 | 🚚 物流     | 物流下单、轨迹查询      | `LogisticsController`                 | `LogisticsService`         | ✅    |
-| 🛡️ 管理     | 用户/商品/订单/数据统计 | `Admin*Controller` (4个)              | 各Service                  | ✅    |
+| 🛡️ 管理     | 用户/商品/订单/数据统计 | `Admin*Controller` (7个)              | 各Service                  | ✅    |
 
 ---
 
@@ -450,8 +484,8 @@ xiantao/
 ├── xiantao-server/                  # 后端服务 (Spring Boot 3.2.3)
 │   ├── src/main/java/com/xiantao/
 │   │   ├── common/                  # 公共组件：异常、响应、全局处理
-│   │   ├── config/                  # 配置：跨域、JWT 拦截器、Web 配置
-│   │   ├── controller/              # 控制层 (16 个 Controller)
+│   │   ├── config/                  # 配置：跨域、JWT 拦截器、管理员拦截器、分页插件、Web 配置
+│   │   ├── controller/              # 控制层 (18 个 Controller)
 │   │   ├── service/                 # 业务层 (10 个 Service)
 │   │   │   └── impl/                # 服务实现类
 │   │   ├── mapper/                  # 数据访问层 (10 个 Mapper)
@@ -462,7 +496,8 @@ xiantao/
 │   │   └── XiantaoApplication.java  # 启动入口
 │   ├── src/main/resources/
 │   │   └── application.yml          # 应用配置
-│   ├── sql/                         # 数据库初始化脚本
+│   ├── sql/
+│   │   └── init.sql                 # 数据库统一初始化脚本
 │   └── pom.xml                      # Maven 依赖配置
 │
 ├── xiantao-web/                     # 网页端 (Vue 3 + Element Plus)
@@ -470,8 +505,8 @@ xiantao/
 │   │   ├── api/                     # API 请求封装 (9 个模块)
 │   │   ├── router/                  # 路由配置
 │   │   ├── stores/                  # Pinia 状态管理
-│   │   ├── views/                   # 页面组件 (14 个页面)
-│   │   └── utils/                   # Axios 拦截器
+│   │   ├── views/                   # 页面组件 (15 个页面)
+│   │   └── utils/                   # Axios 拦截器、图片URL工具
 │   └── vite.config.js
 │
 ├── xiantao-admin/                   # 管理后台 (Vue 3 + ECharts)
@@ -486,6 +521,12 @@ xiantao/
 │   ├── pages/                       # 页面
 │   └── src/                         # uni-app 源码
 │
+├── start.ps1                        # Windows 一键启动脚本 (PowerShell, 推荐)
+├── stop.ps1                         # Windows 一键关闭脚本 (PowerShell, 推荐)
+├── start.bat                        # Windows 启动入口 (调用 start.ps1)
+├── stop.bat                         # Windows 关闭入口 (调用 stop.ps1)
+├── start.sh                         # Linux/macOS 一键启动脚本
+├── stop.sh                          # Linux/macOS 一键关闭脚本
 ├── README.md                        # 技术文档 (本文件)
 ├── 二手交易平台-产品设计书.md        # 产品设计文档
 ├── 二手交易平台-实施计划书.md        # 项目实施计划
@@ -505,7 +546,9 @@ graph LR
         P2["POST /api/auth/register<br/>用户注册"]
         P3["GET /api/category/list<br/>分类列表"]
         P4["GET /api/product/list<br/>商品列表"]
-        P5["GET /api/product/{id}<br/>商品详情"]
+        P5["GET /api/product/search<br/>商品搜索"]
+        P6["GET /api/product/{id}<br/>商品详情"]
+        P7["POST /api/upload/images<br/>图片上传"]
     end
 
     subgraph Auth["🔐 需要认证"]
@@ -519,10 +562,13 @@ graph LR
     end
 
     subgraph Admin["🛡️ 需要管理员权限"]
-        M1["CRUD /api/admin/user/*<br/>用户管理"]
-        M2["CRUD /api/admin/product/*<br/>商品审核"]
-        M3["CRUD /api/admin/order/*<br/>订单管理"]
-        M4["GET /api/admin/category/*<br/>分类管理"]
+        M1["GET /api/admin/dashboard/*<br/>数据统计"]
+        M2["CRUD /api/admin/user/*<br/>用户管理"]
+        M3["CRUD /api/admin/product/*<br/>商品审核"]
+        M4["CRUD /api/admin/order/*<br/>订单管理"]
+        M5["CRUD /api/admin/category/*<br/>分类管理"]
+        M6["GET /api/admin/credit/*<br/>信用管理"]
+        M7["GET /api/admin/transaction/*<br/>交易流水"]
     end
 
     Public -.->|无需 Token| Gateway
@@ -543,7 +589,7 @@ graph LR
 | 担保交易 | `/api/transaction` | 5      | JWT         |
 | 评价模块 | `/api/rating`      | 4      | JWT         |
 | 物流模块 | `/api/logistics`   | 4      | JWT         |
-| 管理模块 | `/api/admin`       | 13     | JWT (admin) |
+| 管理模块 | `/api/admin`       | 20     | JWT (admin) |
 
 ### 统一响应格式
 
@@ -590,33 +636,35 @@ flowchart TB
 
     subgraph Filter["过滤层"]
         F1["JwtInterceptor<br/>身份验证"]
-        F2["CorsConfig<br/>跨域控制"]
-        F3["Spring Validation<br/>参数校验"]
+        F2["AdminInterceptor<br/>管理员验证"]
+        F3["CorsConfig<br/>跨域控制"]
+        F4["Spring Validation<br/>参数校验"]
     end
 
     subgraph Protect["防护层"]
         P1["角色权限控制<br/>admin 角色隔离"]
-        P2["文件上传限制<br/>单文件 10MB"]
+        P2["文件上传校验<br/>类型白名单+5MB限制"]
         P3["敏感信息过滤<br/>密码/TOKEN 不入日志"]
     end
 
     Request([HTTP 请求]) --> F1
-    F1 --> A2
-    A2 --> F3
-    F3 --> P1
+    F1 --> F2
+    F2 --> A2
+    A2 --> F4
+    F4 --> P1
     P1 --> Server[业务逻辑]
     A1 --> P3
-    F2 --> Server
+    F3 --> Server
 ```
 
 | 机制     | 实现方式          | 说明                     |
 | -------- | ----------------- | ------------------------ |
 | 密码加密 | BCrypt            | 不可逆哈希，存储安全     |
 | 身份认证 | JWT Token         | 24 小时有效期            |
-| 角色控制 | 自定义拦截器      | admin 角色隔离           |
+| 角色控制 | AdminInterceptor  | 拦截器级别 admin 角色隔离 |
 | 参数校验 | Spring Validation | DTO 层级校验             |
 | 跨域处理 | CorsConfig        | 允许前端跨域访问         |
-| 文件上传 | Multipart 限制    | 单文件 10MB，总请求 50MB |
+| 文件上传 | 类型白名单+大小限制 | 单文件 5MB，仅允许图片格式 |
 
 ---
 

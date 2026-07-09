@@ -74,6 +74,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { getProductDetail } from '@/api/product'
 import { createOrder } from '@/api/order'
 import { useUserStore } from '@/stores/user'
+import { getImageUrl } from '@/utils/image'
 
 const route = useRoute()
 const router = useRouter()
@@ -93,7 +94,8 @@ async function loadProduct() {
     const res = await getProductDetail(route.params.id)
     product.value = res.data
     if (res.data?.imageList?.length) {
-      currentImage.value = res.data.imageList[0]
+      currentImage.value = getImageUrl(res.data.imageList[0])
+      product.value.imageList = res.data.imageList.map(url => getImageUrl(url))
     }
   } catch (e) {
     console.error(e)

@@ -162,6 +162,7 @@
 import { getLogistics } from '@/api/logistics'
 import { cancelOrder, getOrderDetail, getOrderTransactions, payTransaction, receiveOrder, shipOrder } from '@/api/order'
 import { useUserStore } from '@/stores/user'
+import { getImageUrl } from '@/utils/image'
 import { CircleCheck, CircleClose, Clock, Van } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
@@ -318,11 +319,6 @@ function getTransactionTypeColor(type) {
   }
 }
 
-function getImageUrl(url) {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  return 'http://localhost:8080' + url
-}
 </script>
 
 <style scoped>

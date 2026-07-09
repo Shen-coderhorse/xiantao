@@ -20,7 +20,8 @@ const routes = [
     ]
   },
   { path: '/login', name: 'Login', component: () => import('@/views/Login.vue') },
-  { path: '/register', name: 'Register', component: () => import('@/views/Register.vue') }
+  { path: '/register', name: 'Register', component: () => import('@/views/Register.vue') },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
 ]
 
 const router = createRouter({

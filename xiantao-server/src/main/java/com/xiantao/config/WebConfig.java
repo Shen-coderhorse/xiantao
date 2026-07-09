@@ -10,15 +10,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
+    private final AdminInterceptor adminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/api/admin/**");
+
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns(
                         "/api/auth/login",
                         "/api/auth/register",
                         "/api/product/list",
+                        "/api/product/search",
+                        "/api/product/nearby",
                         "/api/product/{id}",
                         "/api/category/list",
                         "/api/upload/**"

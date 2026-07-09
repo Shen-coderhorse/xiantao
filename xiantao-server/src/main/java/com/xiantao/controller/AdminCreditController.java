@@ -1,16 +1,18 @@
 package com.xiantao.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiantao.common.Result;
+import com.xiantao.entity.User;
 import com.xiantao.entity.UserCredit;
 import com.xiantao.mapper.UserCreditMapper;
 import com.xiantao.service.UserService;
 import com.xiantao.vo.UserCreditVO;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,19 +20,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminCreditController {
 
-    private final UserService userService;
     private final UserCreditMapper userCreditMapper;
+    private final UserService userService;
 
     @GetMapping("/list")
-    public Result<List<UserCreditVO>> getCreditList(
-            HttpServletRequest request,
-            @RequestParam(required = false) String keyword,
+    public Result<Page<UserCreditVO>> getCreditList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Integer creditLevel) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
 
         LambdaQueryWrapper<UserCredit> wrapper = new LambdaQueryWrapper<>();
         if (creditLevel != null) {
@@ -38,8 +35,20 @@ public class AdminCreditController {
         }
         wrapper.orderByDesc(UserCredit::getCreditScore);
 
-        List<UserCredit> list = userCreditMapper.selectList(wrapper);
-        List<UserCreditVO> voList = list.stream()
+        Page<UserCredit> page = new Page<>(pageNum, pageSize);
+        userCreditMapper.selectPage(page, wrapper);
+
+        // 批量查询用户昵称
+        List<Long> userIds = page.getRecords().stream()
+                .map(UserCredit::getUserId)
+                .collect(Collectors.toList());
+        Map<Long, String> userNameMap = Map.of();
+        if (!userIds.isEmpty()) {
+            userNameMap = userService.listByIds(userIds).stream()
+                    .collect(Collectors.toMap(User::getId, User::getNickname));
+        }
+
+        List<UserCreditVO> voList = page.getRecords().stream()
                 .map(c -> {
                     UserCreditVO vo = new UserCreditVO();
                     vo.setUserId(c.getUserId());
@@ -57,7 +66,9 @@ public class AdminCreditController {
                 })
                 .collect(Collectors.toList());
 
-        return Result.success(voList);
+        Page<UserCreditVO> resultPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        resultPage.setRecords(voList);
+        return Result.success(resultPage);
     }
 
     private int getMinScore(Integer level) {
@@ -83,5 +94,5 @@ public class AdminCreditController {
         if (score >= 500) return "#E6A23C";
         if (score >= 350) return "#F56C6C";
         return "#909399";
-    }
+    }
 }

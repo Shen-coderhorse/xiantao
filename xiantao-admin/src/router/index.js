@@ -64,13 +64,20 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+
     if (to.path !== '/login' && !token) {
         next('/login')
     } else if (to.path === '/login' && token) {
         next('/')
+    } else if (token && user.role !== 'admin' && to.path !== '/login') {
+        // 非管理员用户不能访问管理后台
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        next('/login')
     } else {
         next()
     }
 })
 
-export default router
+export default router

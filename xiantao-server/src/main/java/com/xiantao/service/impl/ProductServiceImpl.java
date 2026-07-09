@@ -1,9 +1,7 @@
 package com.xiantao.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
@@ -27,7 +25,9 @@ import com.xiantao.vo.PageVO;
 import com.xiantao.vo.ProductVO;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
@@ -70,8 +70,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         this.page(page, wrapper);
 
         List<ProductVO> voList = page.getRecords().stream()
-                .map(this::convertToVO)
+                .map(this::convertToVOLight)
                 .collect(Collectors.toList());
+
+        if (!voList.isEmpty()) {
+            fillBatchRelations(voList, page.getRecords());
+        }
 
         return PageVO.of(voList, page.getTotal(), (int) page.getCurrent(), (int) page.getSize());
     }
@@ -91,6 +95,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     @Override
     public ProductVO createProduct(Long userId, ProductDTO dto) {
+        log.info("用户{}发布商品: {}", userId, dto.getTitle());
         Category category = categoryService.getById(dto.getCategoryId());
         if (category == null || category.getStatus() != 1) {
             throw new BusinessException("分类不存在或已禁用");
@@ -138,6 +143,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     @Override
     public void deleteProduct(Long userId, Long id) {
+        log.info("用户{}删除商品: {}", userId, id);
         Product product = this.getById(id);
         if (product == null) {
             throw new BusinessException("商品不存在");
@@ -300,6 +306,17 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
                 .collect(Collectors.toList());
     }
 
+    private ProductVO convertToVOLight(Product product) {
+        ProductVO vo = new ProductVO();
+        BeanUtils.copyProperties(product, vo);
+        if (StringUtils.hasText(product.getImages())) {
+            vo.setImageList(Arrays.asList(product.getImages().split(",")));
+        } else {
+            vo.setImageList(Collections.emptyList());
+        }
+        return vo;
+    }
+
     private ProductVO convertToVO(Product product) {
         ProductVO vo = new ProductVO();
         BeanUtils.copyProperties(product, vo);
@@ -322,5 +339,43 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
 
         return vo;
+    }
+
+    /**
+     * 批量填充商品的关联信息（卖家、分类），减少 N+1 查询
+     */
+    private void fillBatchRelations(List<ProductVO> voList, List<Product> products) {
+        // 批量查询卖家
+        Set<Long> sellerIds = products.stream()
+                .map(Product::getSellerId)
+                .filter(id -> id != null)
+                .collect(Collectors.toSet());
+        if (!sellerIds.isEmpty()) {
+            Map<Long, User> sellerMap = userService.listByIds(sellerIds).stream()
+                    .collect(Collectors.toMap(User::getId, u -> u));
+            for (ProductVO vo : voList) {
+                User seller = sellerMap.get(vo.getSellerId());
+                if (seller != null) {
+                    vo.setSellerName(seller.getNickname());
+                    vo.setSellerAvatar(seller.getAvatar());
+                }
+            }
+        }
+
+        // 批量查询分类
+        Set<Long> categoryIds = products.stream()
+                .map(Product::getCategoryId)
+                .filter(id -> id != null)
+                .collect(Collectors.toSet());
+        if (!categoryIds.isEmpty()) {
+            Map<Long, Category> categoryMap = categoryService.listByIds(categoryIds).stream()
+                    .collect(Collectors.toMap(Category::getId, c -> c));
+            for (ProductVO vo : voList) {
+                Category category = categoryMap.get(vo.getCategoryId());
+                if (category != null) {
+                    vo.setCategoryName(category.getName());
+                }
+            }
+        }
     }
 }

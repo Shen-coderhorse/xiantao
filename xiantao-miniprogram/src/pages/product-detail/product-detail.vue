@@ -1,10 +1,24 @@
 <template>
   <div class="detail-page">
-    <div class="swiper" v-if="product.images">
-      <img
-        :src="formatImage(product.images.split(',')[0])"
-        class="main-img"
-      />
+    <div class="swiper" v-if="imageList.length > 0">
+      <div class="image-gallery">
+        <img
+          :src="currentImage"
+          class="main-img"
+        />
+        <div class="thumb-list" v-if="imageList.length > 1">
+          <img
+            v-for="(img, index) in imageList"
+            :key="index"
+            :src="img"
+            :class="['thumb', { active: currentImage === img }]"
+            @click="currentImage = img"
+          />
+        </div>
+      </div>
+    </div>
+    <div v-else class="no-image">
+      <span>暂无图片</span>
     </div>
 
     <div class="info-section">
@@ -65,7 +79,7 @@
 </template>
 
 <script>
-import { getProductDetail, createOrder, getAddressList } from '@/api/index'
+import { getProductDetail, createOrder, getAddressList, getImageUrl, getImageList } from '@/api/index'
 import uni from '@/uni-api'
 
 export default {
@@ -73,6 +87,8 @@ export default {
   data() {
     return {
       product: {},
+      imageList: [],
+      currentImage: '',
       addressList: [],
       selectedAddress: null,
       showAddressPicker: false
@@ -90,6 +106,13 @@ export default {
       try {
         const res = await getProductDetail(id)
         this.product = res.data || {}
+        // 填充图片列表
+        if (this.product.imageList && this.product.imageList.length > 0) {
+          this.imageList = this.product.imageList.map(url => getImageUrl(url))
+        } else if (this.product.images) {
+          this.imageList = getImageList(this.product.images)
+        }
+        this.currentImage = this.imageList[0] || ''
       } catch (e) {
         console.error(e)
       }
@@ -115,9 +138,7 @@ export default {
       this.showAddressPicker = false
     },
     formatImage(url) {
-      if (!url) return ''
-      if (url.startsWith('http')) return url
-      return url
+      return getImageUrl(url)
     },
     contactSeller() {
       uni.showToast({ title: '功能开发中', icon: 'none' })
@@ -153,14 +174,48 @@ export default {
 
 .swiper {
   width: 100%;
-  height: 300px;
+  background: #fff;
+}
+
+.image-gallery {
   background: #fff;
 }
 
 .main-img {
   width: 100%;
-  height: 100%;
+  height: 300px;
   object-fit: cover;
+  background: #f5f5f5;
+}
+
+.thumb-list {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  overflow-x: auto;
+}
+
+.thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.thumb.active {
+  border-color: #409eff;
+}
+
+.no-image {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #999;
 }
 
 .info-section {

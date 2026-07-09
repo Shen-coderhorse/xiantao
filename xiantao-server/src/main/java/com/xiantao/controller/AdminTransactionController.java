@@ -1,35 +1,32 @@
 package com.xiantao.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiantao.common.Result;
 import com.xiantao.entity.TransactionRecord;
 import com.xiantao.service.TransactionRecordService;
-import com.xiantao.service.UserService;
 import com.xiantao.vo.TransactionRecordVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/transaction")
 @RequiredArgsConstructor
 public class AdminTransactionController {
 
-    private final UserService userService;
     private final TransactionRecordService transactionRecordService;
 
     @GetMapping("/list")
-    public Result<List<TransactionRecordVO>> getTransactionList(
+    public Result<Page<TransactionRecordVO>> getTransactionList(
             HttpServletRequest request,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer status) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
 
         LambdaQueryWrapper<TransactionRecord> wrapper = new LambdaQueryWrapper<>();
         if (type != null) {
@@ -40,8 +37,10 @@ public class AdminTransactionController {
         }
         wrapper.orderByDesc(TransactionRecord::getCreateTime);
 
-        List<TransactionRecord> list = transactionRecordService.list(wrapper);
-        List<TransactionRecordVO> voList = list.stream()
+        Page<TransactionRecord> page = new Page<>(pageNum, pageSize);
+        transactionRecordService.page(page, wrapper);
+
+        List<TransactionRecordVO> voList = page.getRecords().stream()
                 .map(t -> {
                     TransactionRecordVO vo = new TransactionRecordVO();
                     vo.setId(t.getId());
@@ -58,18 +57,20 @@ public class AdminTransactionController {
                     vo.setCreateTime(t.getCreateTime());
                     return vo;
                 })
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
 
-        return Result.success(voList);
+        Page<TransactionRecordVO> resultPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        resultPage.setRecords(voList);
+        return Result.success(resultPage);
     }
 
     private String getTransactionTypeText(Integer type) {
         if (type == null) return "未知";
         return switch (type) {
-            case 1 -> "支付";
-            case 2 -> "退款";
-            case 3 -> "提现";
-            case 4 -> "充值";
+            case 1 -> "付款";
+            case 2 -> "托管";
+            case 3 -> "解冻";
+            case 4 -> "退款";
             default -> "未知";
         };
     }
@@ -82,5 +83,5 @@ public class AdminTransactionController {
             case 2 -> "失败";
             default -> "未知";
         };
-    }
+    }
 }

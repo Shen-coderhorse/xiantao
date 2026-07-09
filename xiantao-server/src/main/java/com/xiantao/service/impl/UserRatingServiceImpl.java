@@ -14,8 +14,8 @@ import com.xiantao.service.UserRatingService;
 import com.xiantao.service.UserService;
 import com.xiantao.vo.RatingVO;
 import com.xiantao.vo.UserCreditVO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +23,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserRatingServiceImpl extends ServiceImpl<UserRatingMapper, UserRating> implements UserRatingService {
 
     private final UserService userService;
     private final OrderService orderService;
     private final UserCreditService userCreditService;
+
+    public UserRatingServiceImpl(UserService userService, @Lazy OrderService orderService, UserCreditService userCreditService) {
+        this.userService = userService;
+        this.orderService = orderService;
+        this.userCreditService = userCreditService;
+    }
 
     @Override
     @Transactional

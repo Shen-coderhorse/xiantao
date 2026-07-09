@@ -1,6 +1,7 @@
 package com.xiantao.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiantao.common.Result;
 import com.xiantao.entity.User;
 import com.xiantao.service.UserService;
@@ -21,15 +22,12 @@ public class AdminUserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public Result<List<UserVO>> getUserList(
+    public Result<Page<UserVO>> getUserList(
             HttpServletRequest request,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer status) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
 
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         if (keyword != null && !keyword.isEmpty()) {
@@ -42,22 +40,20 @@ public class AdminUserController {
         }
         wrapper.orderByDesc(User::getCreateTime);
 
-        List<User> users = userService.list(wrapper);
-        List<UserVO> voList = users.stream().map(this::convertToVO).collect(Collectors.toList());
-        return Result.success(voList);
+        Page<User> page = new Page<>(pageNum, pageSize);
+        userService.page(page, wrapper);
+
+        List<UserVO> voList = page.getRecords().stream()
+                .map(this::convertToVO)
+                .collect(Collectors.toList());
+
+        Page<UserVO> resultPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        resultPage.setRecords(voList);
+        return Result.success(resultPage);
     }
 
     @PutMapping("/{id}/status")
-    public Result<Void> updateUserStatus(
-            HttpServletRequest request,
-            @PathVariable Long id,
-            @RequestParam Integer status) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
-
+    public Result<Void> updateUserStatus(@PathVariable Long id, @RequestParam Integer status) {
         User user = userService.getById(id);
         if (user == null) {
             return Result.error(404, "用户不存在");
@@ -68,16 +64,7 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}/role")
-    public Result<Void> updateUserRole(
-            HttpServletRequest request,
-            @PathVariable Long id,
-            @RequestParam String role) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
-
+    public Result<Void> updateUserRole(@PathVariable Long id, @RequestParam String role) {
         User user = userService.getById(id);
         if (user == null) {
             return Result.error(404, "用户不存在");

@@ -6,10 +6,10 @@ import com.xiantao.common.Result;
 import com.xiantao.dto.ShipDTO;
 import com.xiantao.entity.Order;
 import com.xiantao.service.OrderService;
-import com.xiantao.service.UserService;
 import com.xiantao.vo.OrderVO;
 import com.xiantao.vo.PageVO;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class AdminOrderController {
 
     private final OrderService orderService;
-    private final UserService userService;
 
     @GetMapping("/list")
     public Result<PageVO<OrderVO>> getOrderList(
@@ -30,11 +29,6 @@ public class AdminOrderController {
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Integer status) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
 
         Page<Order> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
@@ -51,16 +45,19 @@ public class AdminOrderController {
         return Result.success(PageVO.of(voList, page.getTotal(), (int) page.getCurrent(), (int) page.getSize()));
     }
 
+    @GetMapping("/{id}")
+    public Result<OrderVO> getOrderDetail(@PathVariable Long id) {
+        Order order = orderService.getById(id);
+        if (order == null) {
+            return Result.error(404, "订单不存在");
+        }
+        return Result.success(convertToVO(order));
+    }
+
     @PutMapping("/{id}/ship")
     public Result<Void> adminShipOrder(
-            HttpServletRequest request,
             @PathVariable Long id,
-            @RequestBody ShipDTO shipDTO) {
-
-        Long userId = (Long) request.getAttribute("userId");
-        if (!userService.isAdmin(userId)) {
-            return Result.error(403, "无权限访问");
-        }
+            @Valid @RequestBody ShipDTO shipDTO) {
 
         Order order = orderService.getById(id);
         if (order == null) {
@@ -69,9 +66,23 @@ public class AdminOrderController {
         if (order.getStatus() != 1) {
             return Result.error(400, "订单状态不正确，无法发货");
         }
-        order.setStatus(2);
-        orderService.updateById(order);
+
+        orderService.shipOrder(order.getSellerId(), id, shipDTO);
         return Result.success("发货成功", null);
+    }
+
+    @PutMapping("/{id}/cancel")
+    public Result<Void> adminCancelOrder(@PathVariable Long id) {
+        Order order = orderService.getById(id);
+        if (order == null) {
+            return Result.error(404, "订单不存在");
+        }
+        if (order.getStatus() != 0 && order.getStatus() != 1) {
+            return Result.error(400, "只能取消待付款或待发货的订单");
+        }
+        order.setStatus(3);
+        orderService.updateById(order);
+        return Result.success("取消成功", null);
     }
 
     private OrderVO convertToVO(Order order) {
@@ -97,9 +108,8 @@ public class AdminOrderController {
         return switch (status) {
             case 0 -> "待付款";
             case 1 -> "待发货";
-            case 2 -> "已发货";
-            case 3 -> "已完成";
-            case 4 -> "已取消";
+            case 2 -> "已完成";
+            case 3 -> "已取消";
             default -> "未知";
         };
     }

@@ -30,7 +30,7 @@
         @click="goToDetail(product.id)"
       >
         <img
-          :src="getImageUrl(product.images)"
+          :src="getProductImage(product)"
           class="product-image"
         />
         <div class="product-info">
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { getCategories, getProductList } from '@/api/index'
+import { getCategories, getProductList, getFirstImage, getImageUrl } from '@/api/index'
 import TabBar from '@/components/TabBar.vue'
 
 export default {
@@ -100,8 +100,6 @@ export default {
           categoryId: this.currentCategory
         }
         const res = await getProductList(params)
-        console.log('Product list response:', res)
-        // Backend returns { records: [...], total: N } (MyBatis Plus page format)
         const pageData = res.data || {}
         const list = pageData.records || pageData.list || []
         const total = pageData.total || 0
@@ -130,14 +128,12 @@ export default {
     goToDetail(id) {
       this.$router.push(`/product-detail?id=${id}`)
     },
-    getImageUrl(images) {
-      if (!images) return ''
-      const urls = images.split(',')
-      let url = urls[0].trim()
-      if (!url) return ''
-      if (url.startsWith('http')) return url
-      // Use proxy path for Vite dev server
-      return url
+    getProductImage(product) {
+      // 优先使用 imageList 数组格式，兼容 images 字符串格式
+      if (product.imageList && product.imageList.length > 0) {
+        return getImageUrl(product.imageList[0])
+      }
+      return getFirstImage(product.images)
     }
   }
 }

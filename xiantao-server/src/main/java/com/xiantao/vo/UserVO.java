@@ -2,6 +2,7 @@ package com.xiantao.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,6 +21,8 @@ public class UserVO {
     private Integer status;
 
     private String role;
+
+    private BigDecimal balance;
 
     private LocalDateTime createTime;
 

@@ -13,6 +13,15 @@
         </div>
       </div>
 
+      <div class="filter-section">
+        <div class="sort-bar">
+          <span class="sort-label">排序：</span>
+          <span class="sort-item" :class="{ active: sortBy === 'time_desc' }" @click="changeSort('time_desc')">最新</span>
+          <span class="sort-item" :class="{ active: sortBy === 'price_asc' }" @click="changeSort('price_asc')">价格↑</span>
+          <span class="sort-item" :class="{ active: sortBy === 'price_desc' }" @click="changeSort('price_desc')">价格↓</span>
+        </div>
+      </div>
+
       <div class="product-grid" v-loading="loading">
         <div
           v-for="product in products"
@@ -60,6 +69,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCategoryList } from '@/api/category'
 import { getProductList } from '@/api/product'
+import { getImageUrl } from '@/utils/image'
 
 const route = useRoute()
 const router = useRouter()
@@ -71,6 +81,7 @@ const loading = ref(false)
 const pageNum = ref(1)
 const pageSize = ref(12)
 const total = ref(0)
+const sortBy = ref('time_desc')
 
 onMounted(async () => {
   await loadCategories()
@@ -78,6 +89,7 @@ onMounted(async () => {
 })
 
 watch(() => route.query.keyword, () => {
+  pageNum.value = 1
   loadProducts()
 })
 
@@ -96,7 +108,8 @@ async function loadProducts() {
     const params = {
       pageNum: pageNum.value,
       pageSize: pageSize.value,
-      keyword: route.query.keyword || ''
+      keyword: route.query.keyword || '',
+      sortBy: sortBy.value
     }
     if (selectedCategory.value) {
       params.categoryId = selectedCategory.value
@@ -117,10 +130,10 @@ function selectCategory(categoryId) {
   loadProducts()
 }
 
-function getImageUrl(url) {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  return 'http://localhost:8080' + url
+function changeSort(sort) {
+  sortBy.value = sort
+  pageNum.value = 1
+  loadProducts()
 }
 </script>
 
@@ -132,7 +145,7 @@ function getImageUrl(url) {
 .category-section {
   display: flex;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
@@ -150,6 +163,40 @@ function getImageUrl(url) {
   background: #409eff;
   color: #fff;
   border-color: #409eff;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.sort-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.sort-item {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.sort-item:hover {
+  color: #409eff;
+}
+
+.sort-item.active {
+  color: #fff;
+  background: #409eff;
 }
 
 .product-grid {
