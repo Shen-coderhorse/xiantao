@@ -793,7 +793,7 @@ service-account.json
 # ================================
 
 # npm
-package-lock.json
+# 注意: package-lock.json 必须提交! CI 使用 npm ci, 无 lock 文件将直接失败
 npm-debug.log*
 
 # Yarn
