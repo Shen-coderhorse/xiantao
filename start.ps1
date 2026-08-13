@@ -234,7 +234,7 @@ if ($backendReady) {
 Write-Host "  启动网页端 (端口 $WEB_PORT)..." -ForegroundColor White
 
 $webLog = Join-Path $LOG_DIR "web.log"
-$webProc = Start-Process -FilePath "npm" `
+$webProc = Start-Process -FilePath "npm.cmd" `
     -ArgumentList "run", "dev" `
     -WorkingDirectory $WEB_DIR `
     -RedirectStandardOutput $webLog `
@@ -248,7 +248,7 @@ Write-Ok "网页端已启动 (PID: $($webProc.Id))"
 Write-Host "  启动管理后台 (端口 $ADMIN_PORT)..." -ForegroundColor White
 
 $adminLog = Join-Path $LOG_DIR "admin.log"
-$adminProc = Start-Process -FilePath "npm" `
+$adminProc = Start-Process -FilePath "npm.cmd" `
     -ArgumentList "run", "dev" `
     -WorkingDirectory $ADMIN_DIR `
     -RedirectStandardOutput $adminLog `
@@ -262,7 +262,7 @@ Write-Ok "管理后台已启动 (PID: $($adminProc.Id))"
 Write-Host "  启动小程序端 (端口 $MINI_PORT)..." -ForegroundColor White
 
 $miniLog = Join-Path $LOG_DIR "mini.log"
-$miniProc = Start-Process -FilePath "npm" `
+$miniProc = Start-Process -FilePath "npm.cmd" `
     -ArgumentList "run", "dev:h5" `
     -WorkingDirectory $MINI_DIR `
     -RedirectStandardOutput $miniLog `
