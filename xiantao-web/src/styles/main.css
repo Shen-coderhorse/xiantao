@@ -1,0 +1,159 @@
+/* ==========================================================================
+   闲淘 XianTao — Web 端设计系统（现代商务科技风 · 青绿扁平配色）
+   与 mall-cloud 同级设计语言：token 体系 + Element Plus 主题接管 + 渐变/玻璃/柔和阴影
+   差异化：主色采用 天蓝→青绿 系（区别于 mall 的靛紫），导航采用扁平深青实色
+   ========================================================================== */
+
+/* ---------- Design Tokens ---------- */
+:root {
+  /* 品牌色板（青绿系，扁平清爽） */
+  --brand-primary: #0ea5e9;        /* 天蓝 */
+  --brand-primary-dark: #0284c7;
+  --brand-teal: #14b8a6;           /* 青绿 */
+  --brand-deep: #0f766e;           /* 深青（导航底色） */
+  --brand-cyan: #06b6d4;
+  --brand-amber: #f59e0b;
+
+  /* 兼容旧变量名（全站视图引用） */
+  --primary-color: #0ea5e9;
+  --accent-color: #14b8a6;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-light: #94a3b8;
+  --bg-light: #f1f5f9;
+  --border-color: #e2e8f0;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #f43f5e;
+  --info-color: #06b6d4;
+
+  /* 渐变（青绿系，比 mall 更收敛/扁平） */
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+  --gradient-nav: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+  --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  /* 全局科技风画布：深板岩→深青→深蓝 + 青/蓝径向光晕（杜绝白板背景） */
+  --app-canvas: radial-gradient(1100px 520px at 100% 0%, rgba(20, 184, 166, 0.18), transparent 60%), radial-gradient(900px 480px at 0% 100%, rgba(14, 165, 233, 0.15), transparent 60%), linear-gradient(145deg, #0f172a 0%, #103a3d 55%, #0f2a4d 100%);
+
+  /* 阴影体系（柔和、偏青） */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px rgba(14, 165, 233, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px rgba(14, 165, 233, 0.14), 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  /* 圆角与过渡 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Element Plus 主题接管 ---------- */
+:root {
+  --el-color-primary: var(--brand-primary);
+  --el-color-primary-dark-2: var(--brand-primary-dark);
+  --el-color-primary-light-3: #7dd3fc;
+  --el-color-primary-light-5: #bae6fd;
+  --el-color-primary-light-7: #e0f2fe;
+  --el-color-primary-light-8: #f0f9ff;
+  --el-color-primary-light-9: #f5fbff;
+  --el-color-success: var(--success-color);
+  --el-color-warning: var(--warning-color);
+  --el-color-danger: var(--danger-color);
+  --el-color-info: var(--info-color);
+  --el-border-radius-base: var(--radius-sm);
+  --el-font-family: 'Inter', 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* ---------- Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--el-font-family);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; vertical-align: middle; }
+
+/* ---------- 全局滚动条 ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(14, 165, 233, 0.6); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- 通用动效 ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.page-container { animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ---------- Element 组件全局精修 ---------- */
+.el-button {
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+  font-weight: 500;
+}
+
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link) {
+  background: var(--gradient-primary);
+  border: none;
+}
+
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link):not(.is-disabled):hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.32);
+}
+
+.el-button--primary:not(.is-disabled):active { transform: translateY(0); }
+
+.el-card {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+.el-card:hover { box-shadow: var(--shadow-md); }
+
+.el-input__wrapper,
+.el-textarea__inner {
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+}
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--brand-primary) inset, 0 0 0 3px rgba(14, 165, 233, 0.12) !important;
+}
+
+.el-dialog { border-radius: var(--radius-lg); overflow: hidden; }
+.el-tag { border-radius: 6px; font-weight: 500; }
+.el-carousel__item { border-radius: var(--radius-lg); overflow: hidden; }
+
+/* ---------- 深色科技画布上的分页器适配（EP 全局） ---------- */
+.el-pagination {
+  --el-pagination-bg-color: transparent;
+  --el-pagination-button-disabled-bg-color: transparent;
+  justify-content: center;
+}
+.el-pagination button,
+.el-pagination .el-pager li {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+  border-radius: 8px;
+}
+.el-pagination .el-pager li.is-active {
+  background: var(--gradient-primary) !important;
+  color: #fff !important;
+}

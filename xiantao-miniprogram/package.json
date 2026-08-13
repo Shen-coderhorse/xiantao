@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev:h5": "vite",
+    "build": "vite build",
     "build:h5": "vite build"
   },
   "dependencies": {

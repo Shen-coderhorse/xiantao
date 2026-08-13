@@ -33,14 +33,26 @@
 | Maven   | 3.8+     | Java 项目管理 |
 | MySQL   | 8.0+     | 关系型数据库  |
 
-### 1️⃣ 数据库初始化
+### 1️⃣ 配置本地敏感信息（必需）
+
+数据库账号与 JWT 密钥已从 `application.yml` 外置，首次运行前必须配置：
 
 ```bash
-mysql -u root -p
-source e:/xiantao/xiantao-server/sql/init.sql
+# 复制模板并填入本地 MySQL 账号与随机 JWT 密钥
+cp xiantao-server/application-local.yml.example xiantao-server/application-local.yml
 ```
 
-### 2️⃣ 一键启动所有服务
+> 或者设置环境变量：`XIANTAO_DB_USERNAME` / `XIANTAO_DB_PASSWORD` / `XIANTAO_JWT_SECRET`。
+> `application-local.yml` 已被 `.gitignore` 忽略，禁止提交。
+
+### 2️⃣ 数据库（Flyway 自动迁移，无需手动执行 SQL）
+
+配置好上一步的 DB 账号后直接启动后端即可：应用通过 JDBC `createDatabaseIfNotExist=true` 自动建库，Flyway 在启动时按序执行 `xiantao-server/src/main/resources/db/migration/` 下的版本化迁移（`V1__init_schema.sql` 建表与种子数据、`V2__seed_demo_balance.sql` 修复演示账号余额）。
+
+> 已有数据的库（无 `flyway_schema_history`）会被自动**基线化**，不会重跑 V1 的建表语句，现有数据安全。
+> 手动或容器初始化仍可用 `sql/init.sql`（`docker-compose` 通过 `docker-entrypoint-initdb.d` 挂载它）；它与 V1 是同一份 v1 schema。历史补丁（update.sql / data.sql / fix_*.sql）已合并删除。
+
+### 3️⃣ 一键启动所有服务
 
 **Windows (PowerShell 推荐):**
 ```powershell
@@ -58,7 +70,7 @@ chmod +x start.sh stop.sh
 > 启动脚本会自动检查环境、检测端口冲突、按顺序启动后端和前端服务。
 > 所有服务在同一终端窗口后台运行，不会弹出新窗口。
 
-### 3️⃣ 手动启动（可选）
+### 4️⃣ 手动启动（可选）
 
 ```bash
 cd xiantao-server
@@ -67,7 +79,7 @@ mvn spring-boot:run
 
 > 后端默认运行在 `http://localhost:8080`
 
-### 4️⃣ 启动前端
+### 5️⃣ 启动前端
 
 **网页端：**
 
@@ -172,7 +184,7 @@ flowchart TB
     end
 
     subgraph Backend[" 后端技术栈"]
-        B1["Spring Boot 3.2"] ~~~ B2["Java 21"] ~~~ B3["MyBatis-Plus"] ~~~ B4["jjwt 0.12"] ~~~ B5["BCrypt"] ~~~ B6["Lombok"]
+        B1["Spring Boot 3.2"] ~~~ B2["Java 21"] ~~~ B3["MyBatis-Plus"] ~~~ B4["jjwt 0.12"] ~~~ B5["BCrypt"] ~~~ B6["Lombok"] ~~~ B7["Flyway 9.22"]
     end
 
     subgraph Storage["💾 存储"]
@@ -552,7 +564,7 @@ graph LR
     end
 
     subgraph Auth["🔐 需要认证"]
-        A1["GET/PUT /api/user/*<br/>用户管理"]
+        A1["GET/PUT /api/user/*<br/>用户信息<br/>POST /api/user/recharge 充值"]
         A2["CRUD /api/product/*<br/>商品操作"]
         A3["CRUD /api/order/*<br/>订单操作"]
         A4["CRUD /api/address/*<br/>地址管理"]
@@ -738,4 +750,3 @@ docker-compose up -d
 <p align="center">
   <strong>如果这个项目对您有帮助，请给我们一个 ⭐</strong>
 </p>
-

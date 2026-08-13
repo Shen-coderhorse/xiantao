@@ -15,3 +15,7 @@ export function getUserInfo() {
 export function updateUserInfo(data) {
   return request.put('/user/info', data)
 }
+
+export function recharge(amount) {
+  return request.post('/user/recharge', { amount })
+}

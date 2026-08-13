@@ -7,6 +7,8 @@ import com.xiantao.dto.UserUpdateDTO;
 import com.xiantao.entity.User;
 import com.xiantao.vo.UserVO;
 
+import java.math.BigDecimal;
+
 public interface UserService extends IService<User> {
 
     UserVO register(RegisterDTO dto);
@@ -16,6 +18,8 @@ public interface UserService extends IService<User> {
     UserVO getUserInfo(Long userId);
 
     UserVO updateUserInfo(Long userId, UserUpdateDTO dto);
+
+    UserVO recharge(Long userId, BigDecimal amount);
 
     boolean isAdmin(Long userId);
 }

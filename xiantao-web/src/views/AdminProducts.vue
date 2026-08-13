@@ -390,6 +390,13 @@ function getStatusText(status) {
   margin-bottom: 20px;
 }
 
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
 .filter-section {
   margin-bottom: 20px;
   display: flex;

@@ -92,7 +92,8 @@ export default {
 <style scoped>
 .profile-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--app-canvas);
+  background-attachment: fixed;
   padding-bottom: 70px;
 }
 

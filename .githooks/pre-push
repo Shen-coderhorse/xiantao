@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# 闲淘 pre-push 门禁：本地运行与 CI 相同的一组命令（后端测试 + 三前端构建）。
+# 可直接手动自检： bash .githooks/pre-push
+# 激活方式： git config core.hooksPath .githooks  （或复制到 .git/hooks/pre-push）
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+fail=0
+
+echo "[pre-push] 1/4 后端测试 mvn -q test ..."
+( cd xiantao-server && mvn -q test ) || { echo "[pre-push] FAIL: 后端测试未通过（在 xiantao-server 目录跑 mvn -q test 复现）"; fail=1; }
+
+for app in xiantao-web xiantao-admin xiantao-miniprogram; do
+  echo "[pre-push] 构建 $app （npm run build）..."
+  ( cd "$app" && npm run build ) || { echo "[pre-push] FAIL: $app 构建失败（在 $app 目录跑 npm run build 复现）"; fail=1; }
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo "[pre-push] 门禁未通过，已阻止 push。修复后重试，或临时 --no-verify（不推荐）。"
+  exit 1
+fi
+echo "[pre-push] 门禁通过：后端测试 + 三前端构建全部成功。"
+exit 0

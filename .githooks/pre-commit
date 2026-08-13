@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# 闲淘 pre-commit 门禁：轻量、确定性、离线——阻止把本地敏感配置或已作废的旧密钥提交入库。
+# 可直接手动自检： bash .githooks/pre-commit
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+# 1) 禁止提交本地敏感配置文件
+if git diff --cached --name-only | grep -qE '(^|/)application-local\.yml$'; then
+  echo "[pre-commit] 拒绝提交 application-local.yml（本地敏感配置，应保持未跟踪）"
+  exit 1
+fi
+
+# 2) 禁止把已轮换作废的旧 JWT 密钥重新带回仓库
+# 只检测新增/修改行(^+), 放行删除行(^-), 避免拦截“移除旧密钥”的正确提交;
+# 排除本文件自身, 避免黑名单字符串出现在 hook 源码中时自匹配误拦
+if git diff --cached -U0 -- . ':(exclude).githooks/pre-commit' | grep '^+' | grep -q 'xiantao-jwt-secret-key-2024'; then
+  echo "[pre-commit] 检测到已作废的旧 JWT 密钥；请使用占位符/环境变量，勿硬编码"
+  exit 1
+fi
+
+exit 0

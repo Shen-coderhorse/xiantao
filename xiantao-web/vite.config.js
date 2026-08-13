@@ -22,5 +22,17 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        // 体积大的依赖单独分块，消除 500KB chunk 警告并提升缓存命中率
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          'element-plus': ['element-plus']
+        }
+      }
+    }
   }
 })

@@ -12,6 +12,7 @@
                 <div class="balance-item">
                   <span class="label">余额</span>
                   <span class="value">¥{{ userStore.user?.balance || '0.00' }}</span>
+                  <el-button size="small" type="primary" plain @click="handleRecharge">充值</el-button>
                 </div>
                 <div class="balance-item" @click="router.push('/credit')">
                   <span class="label">信用分</span>
@@ -70,10 +71,10 @@
 
 <script setup>
 import { getUserCredit } from '@/api/rating'
-import { updateUserInfo } from '@/api/user'
+import { recharge, updateUserInfo } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import { Goods, List, Location, Star, Wallet } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -108,6 +109,27 @@ async function loadCreditInfo() {
   }
 }
 
+async function handleRecharge() {
+  try {
+    const { value } = await ElMessageBox.prompt('请输入充值金额（元）', '账户充值', {
+      confirmButtonText: '确认充值',
+      cancelButtonText: '取消',
+      inputPattern: /^\d+(\.\d{1,2})?$/,
+      inputErrorMessage: '请输入有效金额（最多两位小数）'
+    })
+    const amount = Number(value)
+    if (!(amount > 0)) {
+      ElMessage.warning('充值金额必须大于 0')
+      return
+    }
+    const res = await recharge(amount)
+    userStore.setUser(res.data, userStore.token)
+    ElMessage.success('充值成功，当前余额 ¥' + res.data.balance)
+  } catch (e) {
+    if (e !== 'cancel') console.error(e)
+  }
+}
+
 async function handleUpdate() {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
@@ -128,7 +150,7 @@ async function handleUpdate() {
 <style scoped>
 .user-center {
   padding: 20px 0;
-  background: #f5f7fa;
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -140,8 +162,9 @@ async function handleUpdate() {
 
 .user-card {
   background: #fff;
-  padding: 30px;
-  border-radius: 8px;
+  padding: 32px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .avatar-section {
@@ -149,13 +172,21 @@ async function handleUpdate() {
   margin-bottom: 30px;
 }
 
+.avatar-section :deep(.el-avatar) {
+  background: var(--gradient-primary);
+  font-size: 32px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.32);
+}
+
 .avatar-section h2 {
   margin-top: 16px;
   font-size: 20px;
+  color: var(--text-primary);
 }
 
 .avatar-section p {
-  color: #999;
+  color: var(--text-light);
   margin-top: 4px;
 }
 
@@ -165,7 +196,7 @@ async function handleUpdate() {
   gap: 24px;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px dashed #eee;
+  border-top: 1px dashed var(--border-color);
 }
 
 .balance-item {
@@ -174,7 +205,7 @@ async function handleUpdate() {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: var(--transition-base);
 }
 
 .balance-item:hover {
@@ -183,22 +214,38 @@ async function handleUpdate() {
 
 .balance-item .label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .balance-item .value {
   font-size: 20px;
   font-weight: bold;
-  color: #409eff;
+  color: var(--brand-primary);
 }
 
 .menu-card {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .menu-card h3 {
   margin: 0;
   font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 12px;
+}
+
+.menu-card h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
 }
 
 .menu-list {
@@ -212,16 +259,17 @@ async function handleUpdate() {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: var(--transition-base);
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .menu-item:hover {
   background: #f0f9ff;
-  color: #409eff;
+  color: var(--brand-primary);
+  transform: translateX(4px);
 }
 
 @media (max-width: 768px) {

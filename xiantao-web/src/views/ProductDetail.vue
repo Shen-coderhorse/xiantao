@@ -139,11 +139,12 @@ function formatDate(dateStr) {
 
 .detail-card {
   display: flex;
-  gap: 40px;
+  gap: 48px;
   background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: 32px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
 }
 
 .image-section {
@@ -153,8 +154,8 @@ function formatDate(dateStr) {
 .main-image {
   width: 100%;
   height: 400px;
-  background: #f5f5f5;
-  border-radius: 8px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -162,13 +163,13 @@ function formatDate(dateStr) {
 }
 
 .main-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .no-image {
-  color: #999;
+  color: var(--text-light);
   font-size: 18px;
 }
 
@@ -181,14 +182,15 @@ function formatDate(dateStr) {
 .image-thumb {
   width: 80px;
   height: 80px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   cursor: pointer;
   border: 2px solid transparent;
+  transition: var(--transition-base);
 }
 
 .image-thumb.active {
-  border-color: #409eff;
+  border-color: var(--brand-primary);
 }
 
 .image-thumb img {
@@ -203,32 +205,37 @@ function formatDate(dateStr) {
 
 .title {
   font-size: 24px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
 .price-section {
+  background: #f0f9ff;
+  padding: 18px 20px;
+  border-radius: var(--radius-sm);
   margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
 }
 
 .price {
   font-size: 32px;
   font-weight: bold;
-  color: #f56c6c;
+  color: var(--danger-color);
 }
 
 .original-price {
   font-size: 18px;
-  color: #999;
+  color: var(--text-light);
   text-decoration: line-through;
-  margin-left: 12px;
 }
 
 .meta-section {
   padding: 20px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
 }
 
@@ -239,11 +246,14 @@ function formatDate(dateStr) {
 }
 
 .meta-item .label {
-  color: #999;
+  color: var(--text-light);
 }
 
 .seller-section {
   margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
 }
 
 .seller-info {
@@ -253,12 +263,20 @@ function formatDate(dateStr) {
 }
 
 .seller-name {
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .seller-label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
+}
+
+.action-section .el-button {
+  height: 48px;
+  font-size: 16px;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 .action-section {
@@ -266,24 +284,41 @@ function formatDate(dateStr) {
 }
 
 .login-tip {
-  color: #999;
+  color: var(--text-light);
   font-size: 12px;
   margin-top: 10px;
 }
 
 .description-card {
   background: #fff;
-  padding: 30px;
-  border-radius: 8px;
+  padding: 32px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .description-card h3 {
   margin-bottom: 16px;
   font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 14px;
+}
+
+.description-card h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
 }
 
 .description-card p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.8;
 }
 </style>

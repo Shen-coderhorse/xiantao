@@ -51,4 +51,16 @@ class UserController {
         UserVO vo = userService.updateUserInfo(userId, dto);
         return Result.success("修改成功", vo);
     }
+
+    @PostMapping("/recharge")
+    public Result<UserVO> recharge(HttpServletRequest request, @RequestBody java.util.Map<String, Object> body) {
+        Long userId = (Long) request.getAttribute("userId");
+        Object raw = body == null ? null : body.get("amount");
+        if (raw == null) {
+            throw new com.xiantao.common.BusinessException("充值金额不能为空");
+        }
+        java.math.BigDecimal amount = new java.math.BigDecimal(raw.toString());
+        UserVO vo = userService.recharge(userId, amount);
+        return Result.success("充值成功", vo);
+    }
 }

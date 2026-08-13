@@ -51,7 +51,9 @@ public class UploadController {
 
         List<String> urls = new ArrayList<>();
         String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        String fullPath = uploadPath + File.separator + datePath;
+        // 将配置的上传根目录解析为绝对路径：MultipartFile.transferTo 对相对路径会按容器临时目录解析，
+        // 导致与 mkdirs 创建的目录不一致而写入失败；此处统一转绝对路径，兼顾机器无关配置与写入正确性
+        String fullPath = new File(uploadPath, datePath).getAbsolutePath();
 
         File dir = new File(fullPath);
         if (!dir.exists() && !dir.mkdirs()) {
@@ -114,5 +116,6 @@ public class UploadController {
         }
 
         return Result.success("上传成功", urls);
-    }
+    }
+
 }

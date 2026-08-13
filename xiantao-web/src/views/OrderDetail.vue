@@ -84,7 +84,7 @@
                   :key="index"
                   :timestamp="track.trackTime"
                   placement="top"
-                  :color="index === 0 ? '#409eff' : '#ddd'"
+                  :color="index === 0 ? '#0ea5e9' : '#ddd'"
                 >
                   <div class="track-item">
                     <div class="track-description">{{ track.description }}</div>
@@ -324,7 +324,7 @@ function getTransactionTypeColor(type) {
 <style scoped>
 .order-detail-page {
   padding: 20px 0;
-  background: #f5f7fa;
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -344,7 +344,7 @@ function getTransactionTypeColor(type) {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #f1f5f9;
 }
 
 .order-content {
@@ -355,7 +355,8 @@ function getTransactionTypeColor(type) {
 
 .order-status-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .status-info {
@@ -367,13 +368,13 @@ function getTransactionTypeColor(type) {
 .status-text h3 {
   margin: 0 0 8px 0;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .status-text p {
   margin: 0;
   font-size: 14px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .order-info-card,
@@ -382,14 +383,16 @@ function getTransactionTypeColor(type) {
 .logistics-card,
 .transaction-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  color: #333;
-  border-bottom: 1px solid #eee;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
@@ -397,7 +400,7 @@ h3 {
   display: flex;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px dashed #eee;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .info-row:last-child {
@@ -405,12 +408,12 @@ h3 {
 }
 
 .info-row .label {
-  color: #999;
+  color: var(--text-light);
   font-size: 14px;
 }
 
 .info-row .value {
-  color: #333;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
@@ -428,8 +431,9 @@ h3 {
 .product-item img {
   width: 80px;
   height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
+  object-fit: contain;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
 }
 
 .product-info {
@@ -438,7 +442,7 @@ h3 {
 
 .product-title {
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -448,7 +452,7 @@ h3 {
 .product-price {
   font-size: 16px;
   font-weight: bold;
-  color: #f56c6c;
+  color: var(--danger-color);
 }
 
 .address-info .receiver {
@@ -456,12 +460,12 @@ h3 {
   gap: 12px;
   margin-bottom: 8px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .address-text {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 

@@ -193,7 +193,22 @@ async function handleDelete(id) {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #f1f5f9;
+  font-weight: 700;
+  position: relative;
+  padding-left: 14px;
+}
+
+.page-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
 }
 
 .address-list {
@@ -203,18 +218,21 @@ async function handleDelete(id) {
 
 .address-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 20px;
-  border: 1px solid #eee;
-  transition: all 0.3s;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
 }
 
 .address-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  border-color: rgba(14, 165, 233, 0.25);
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.14);
 }
 
 .address-card.is-default {
-  border-color: #409eff;
+  border-color: var(--brand-primary);
   background: #f0f9ff;
 }
 
@@ -231,25 +249,25 @@ async function handleDelete(id) {
 
 .name {
   font-size: 16px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .phone {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .full-address {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .address-actions {
   display: flex;
   gap: 8px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
   padding-top: 12px;
 }
 

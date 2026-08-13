@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ResourceConfig implements WebMvcConfigurer {
 
-    @Value("${upload.path:E:/xiantao/uploads}")
+    @Value("${upload.path:../uploads}")
     private String uploadPath;
 
     @Override

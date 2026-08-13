@@ -104,18 +104,21 @@ function handleCommand(command) {
   flex-direction: column;
 }
 
+/* ---------- 扁平深青吸顶导航 ---------- */
 .header {
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--gradient-nav);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 16px rgba(15, 118, 110, 0.28);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.25);
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 0 24px;
+  min-height: 64px;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -126,16 +129,22 @@ function handleCommand(command) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .logo-icon {
-  font-size: 28px;
+  font-size: 26px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
 .logo-text {
   font-size: 24px;
-  font-weight: bold;
-  color: #409eff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #5eead4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .search-box {
@@ -143,10 +152,47 @@ function handleCommand(command) {
   max-width: 500px;
 }
 
+.search-box :deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: none;
+  border-radius: 10px;
+  transition: var(--transition-base);
+}
+
+.search-box :deep(.el-input__wrapper:hover),
+.search-box :deep(.el-input__wrapper.is-focus) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(94, 234, 212, 0.6);
+}
+
+.search-box :deep(.el-input__inner) { color: #fff; }
+.search-box :deep(.el-input__inner::placeholder) { color: rgba(255, 255, 255, 0.65); }
+
+.search-box :deep(.el-input-group__append) {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: none;
+  box-shadow: none;
+}
+.search-box :deep(.el-input-group__append .el-button) { color: #fff; }
+
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
+}
+
+/* 未登录时的普通按钮在深色头上用描边白字 */
+.nav-actions :deep(.el-button:not(.el-button--primary)) {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.nav-actions :deep(.el-button:not(.el-button--primary):hover) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .user-info {
@@ -154,22 +200,28 @@ function handleCommand(command) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 10px;
+  transition: background 0.25s ease;
 }
+.user-info:hover { background: rgba(255, 255, 255, 0.12); }
 
-.username {
-  color: #333;
-}
+.username { color: #fff; font-size: 14px; }
 
 .main {
   flex: 1;
   padding: 20px 0;
+  background: var(--app-canvas);
+  background-attachment: fixed;
 }
 
 .footer {
-  background: #fff;
-  padding: 20px;
+  background: var(--gradient-nav);
+  padding: 24px;
   text-align: center;
-  color: #666;
-  border-top: 1px solid #eee;
+  color: rgba(255, 255, 255, 0.75);
+  border-top: 1px solid rgba(20, 184, 166, 0.2);
+  font-size: 13px;
 }
 </style>

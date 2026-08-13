@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -121,6 +122,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUpdateTime(LocalDateTime.now());
         this.updateById(user);
 
+        return convertToVO(user);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public UserVO recharge(Long userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("充值金额必须大于 0");
+        }
+        if (amount.compareTo(new BigDecimal("100000")) > 0) {
+            throw new BusinessException("单次充值金额不能超过 100000");
+        }
+        User user = this.getById(userId);
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+        BigDecimal current = user.getBalance() == null ? BigDecimal.ZERO : user.getBalance();
+        user.setBalance(current.add(amount));
+        user.setUpdateTime(LocalDateTime.now());
+        this.updateById(user);
         return convertToVO(user);
     }
 

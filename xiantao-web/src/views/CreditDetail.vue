@@ -78,7 +78,10 @@
 
 <script setup>
 import { getUserCredit, getUserRatings } from '@/api/rating'
+import { useUserStore } from '@/stores/user'
 import { onMounted, ref } from 'vue'
+
+const userStore = useUserStore()
 
 const creditInfo = ref(null)
 const receivedRatings = ref([])
@@ -102,8 +105,10 @@ async function loadCreditInfo() {
 }
 
 async function loadReceivedRatings() {
+  const userId = userStore.user?.id
+  if (!userId) return
   try {
-    const res = await getUserRatings()
+    const res = await getUserRatings(userId)
     receivedRatings.value = res.data || []
   } catch (e) {
     console.error(e)
@@ -123,7 +128,7 @@ function getRatingType(rating) {
 <style scoped>
 .credit-page {
   padding: 20px 0;
-  background: #f5f7fa;
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -143,7 +148,22 @@ function getRatingType(rating) {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #f1f5f9;
+  font-weight: 700;
+  position: relative;
+  padding-left: 14px;
+}
+
+.page-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
 }
 
 .credit-content {
@@ -154,9 +174,10 @@ function getRatingType(rating) {
 
 .credit-score-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   text-align: center;
-  padding: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
 }
 
 .score-display {
@@ -170,7 +191,7 @@ function getRatingType(rating) {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 6px solid #409eff;
+  border: 6px solid var(--brand-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,7 +201,7 @@ function getRatingType(rating) {
 .score-value {
   font-size: 40px;
   font-weight: bold;
-  color: #409eff;
+  color: var(--brand-primary);
 }
 
 .score-level .el-tag {
@@ -203,47 +224,51 @@ function getRatingType(rating) {
 
 .credit-stats-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .credit-stats-card h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  color: #333;
-  border-bottom: 1px solid #eee;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
 .stat-item {
   text-align: center;
   padding: 16px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
   margin-bottom: 12px;
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .stat-label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .ratings-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .ratings-card h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  color: #333;
-  border-bottom: 1px solid #eee;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
@@ -255,7 +280,7 @@ function getRatingType(rating) {
 
 .rating-item {
   padding: 16px;
-  border-bottom: 1px dashed #eee;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .rating-item:last-child {
@@ -275,18 +300,18 @@ function getRatingType(rating) {
 
 .reviewer-name {
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .rating-time {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .rating-content {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
   padding-left: 52px;
 }

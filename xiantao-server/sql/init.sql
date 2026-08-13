@@ -1,7 +1,9 @@
 -- ==========================================
 -- 闲淘二手交易平台 - 数据库初始化脚本
 -- 版本：v3.0 (统一版)
--- 说明：一个脚本完成全部数据库初始化，无需额外执行其他SQL文件
+-- 用途：docker-compose 容器初始化（docker-entrypoint-initdb.d）与手动引导；含 CREATE DATABASE / USE
+-- 应用运行时的版本化建表由 Flyway 负责： src/main/resources/db/migration/V1__init_schema.sql（与本文件同为 v1 schema，仅去除 CREATE DATABASE / USE）
+-- 新增变更请同步新增 Flyway V2+ 迁移并视需更新本文件
 -- ==========================================
 
 CREATE DATABASE IF NOT EXISTS xiantao DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -191,9 +193,9 @@ CREATE TABLE logistics_track (
 -- ==========================================
 
 -- 3.1 用户数据
--- 密码统一为123456(admin用户密码为admin123)，使用BCrypt加密
--- admin用户: 密码admin123 -> $2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH (旧hash)
--- 实际使用时请通过注册接口创建用户或使用 fix_admin.sql 中的密码
+-- 密码统一为123456（含 admin 用户，实测登录验证），使用BCrypt加密
+-- 旧注释曾误标 admin 密码为 admin123，实际与测试账号一致为 123456
+-- 实际使用时请通过注册接口创建用户（历史 fix_admin.sql 已合并入本文件并删除）
 INSERT INTO sys_user (username, password, phone, nickname, status, role, balance) VALUES
 ('test001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', '13800138001', '小明同学', 1, 'user', 10000.00),
 ('test002', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', '13800138002', '小红同学', 1, 'user', 8000.00),

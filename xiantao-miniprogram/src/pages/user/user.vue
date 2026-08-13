@@ -104,7 +104,8 @@ export default {
 <style scoped>
 .user-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--app-canvas);
+  background-attachment: fixed;
 }
 
 .login-prompt {

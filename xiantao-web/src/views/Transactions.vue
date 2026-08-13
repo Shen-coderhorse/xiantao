@@ -89,7 +89,7 @@ function getTransactionTypeColor(type) {
 <style scoped>
 .transactions-page {
   padding: 20px 0;
-  background: #f5f7fa;
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -109,7 +109,22 @@ function getTransactionTypeColor(type) {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #f1f5f9;
+  font-weight: 700;
+  position: relative;
+  padding-left: 14px;
+}
+
+.page-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
 }
 
 .transactions-content {
@@ -126,9 +141,17 @@ function getTransactionTypeColor(type) {
 
 .transaction-item {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid transparent;
+  transition: var(--transition-base);
+}
+
+.transaction-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(14, 165, 233, 0.22);
+  box-shadow: 0 10px 26px rgba(14, 165, 233, 0.12);
 }
 
 .transaction-header {
@@ -137,7 +160,7 @@ function getTransactionTypeColor(type) {
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px dashed #eee;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .tx-amount {
@@ -146,11 +169,11 @@ function getTransactionTypeColor(type) {
 }
 
 .tx-amount.income {
-  color: #67C23A;
+  color: var(--success-color);
 }
 
 .tx-amount.expense {
-  color: #F56C6C;
+  color: var(--danger-color);
 }
 
 .transaction-body {
@@ -168,27 +191,27 @@ function getTransactionTypeColor(type) {
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .tx-order {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .tx-time {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
   white-space: nowrap;
 }
 
 .tx-remark {
   font-size: 12px;
-  color: #909399;
-  background: #f5f7fa;
+  color: var(--text-secondary);
+  background: var(--bg-light);
   padding: 6px 10px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-bottom: 8px;
 }
 

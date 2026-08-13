@@ -4,14 +4,25 @@ server:
 spring:
   application:
     name: xiantao-server
+  config:
+    # 本地敏感配置外置：从工作目录（xiantao-server）加载未跟踪的 application-local.yml
+    import: optional:file:./application-local.yml
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/xiantao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: 123456
+    url: jdbc:mysql://localhost:3306/xiantao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+    # 敏感项不入库：由环境变量或 application-local.yml 提供（见 application-local.yml.example）
+    username: ${XIANTAO_DB_USERNAME}
+    password: ${XIANTAO_DB_PASSWORD}
     druid:
       connection-init-sqls:
         - SET NAMES utf8mb4
+  # Flyway 数据库版本化迁移：启动时自动执行 db/migration 下的 V版本脚本
+  flyway:
+    enabled: true
+    # 已有数据（非空 schema 且无 flyway_schema_history）时自动基线化，不重跑 V1 的 DROP/CREATE，保护现有数据
+    baseline-on-migrate: true
+    baseline-version: 1
+    locations: classpath:db/migration
   http:
     encoding:
       charset: UTF-8
@@ -31,11 +42,13 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 jwt:
-  secret: xiantao-jwt-secret-key-2024-second-hand-trading-platform
+  # 密钥不入库：由环境变量或 application-local.yml 提供；旧入库密钥已作废轮换
+  secret: ${XIANTAO_JWT_SECRET}
   expiration: 86400000
 
 upload:
-  path: E:/xiantao/uploads
+  # 相对启动目录（xiantao-server）指向项目根 uploads，不再绑定单一机器盘符
+  path: ../uploads
   url-prefix: /uploads/
 
 logging:

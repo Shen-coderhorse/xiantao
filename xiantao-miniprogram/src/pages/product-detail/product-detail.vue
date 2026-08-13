@@ -168,7 +168,8 @@ export default {
 <style scoped>
 .detail-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--app-canvas);
+  background-attachment: fixed;
   padding-bottom: 80px;
 }
 

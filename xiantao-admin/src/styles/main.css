@@ -1,0 +1,149 @@
+/* ==========================================================================
+   闲淘 XianTao — 管理后台设计系统（现代商务科技风 · 青绿扁平配色）
+   与 mall-admin 同级设计语言：token 体系 + Element Plus 主题接管 + 深色侧栏 + 玻璃顶栏
+   差异化：主色青绿系（区别于 mall 的靛紫），侧栏采用扁平深青（非多段炫彩渐变）
+   ========================================================================== */
+
+/* ---------- Design Tokens ---------- */
+:root {
+  --brand-primary: #0ea5e9;
+  --brand-primary-dark: #0284c7;
+  --brand-teal: #14b8a6;
+  --brand-deep: #0f766e;
+  --brand-cyan: #06b6d4;
+
+  --primary-color: #0ea5e9;
+  --accent-color: #14b8a6;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-light: #94a3b8;
+  --bg-light: #f1f5f9;
+  --border-color: #e2e8f0;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #f43f5e;
+  --info-color: #06b6d4;
+
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+  /* 侧栏底色：扁平深青-深板岩两段（比 mall 三段炫彩更收敛） */
+  --gradient-sidebar: linear-gradient(180deg, #0f172a 0%, #134e4a 100%);
+  /* 全局科技风画布：深板岩→深青→深蓝 + 青/蓝径向光晕（杜绝白板背景） */
+  --app-canvas: radial-gradient(1100px 520px at 100% 0%, rgba(20, 184, 166, 0.18), transparent 60%), radial-gradient(900px 480px at 0% 100%, rgba(14, 165, 233, 0.15), transparent 60%), linear-gradient(145deg, #0f172a 0%, #103a3d 55%, #0f2a4d 100%);
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px rgba(14, 165, 233, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px rgba(14, 165, 233, 0.14), 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Element Plus 主题接管 ---------- */
+:root {
+  --el-color-primary: var(--brand-primary);
+  --el-color-primary-dark-2: var(--brand-primary-dark);
+  --el-color-primary-light-3: #7dd3fc;
+  --el-color-primary-light-5: #bae6fd;
+  --el-color-primary-light-7: #e0f2fe;
+  --el-color-primary-light-8: #f0f9ff;
+  --el-color-primary-light-9: #f5fbff;
+  --el-color-success: var(--success-color);
+  --el-color-warning: var(--warning-color);
+  --el-color-danger: var(--danger-color);
+  --el-color-info: var(--info-color);
+  --el-border-radius-base: var(--radius-sm);
+  --el-font-family: 'Inter', 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  font-family: var(--el-font-family);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { text-decoration: none; color: inherit; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(14, 165, 233, 0.6); }
+::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-container { animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ---------- Element 组件全局精修 ---------- */
+.el-button {
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+  font-weight: 500;
+}
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link) { background: var(--gradient-primary); border: none; }
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link):not(.is-disabled):hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.32);
+}
+
+.el-card {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+.el-card:hover { box-shadow: var(--shadow-md); }
+
+.el-input__wrapper, .el-textarea__inner {
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+}
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--brand-primary) inset, 0 0 0 3px rgba(14, 165, 233, 0.12) !important;
+}
+
+.el-dialog { border-radius: var(--radius-lg); overflow: hidden; }
+.el-tag { border-radius: 6px; font-weight: 500; }
+
+/* 表格圆角与表头 */
+.el-table { border-radius: var(--radius-md); overflow: hidden; }
+.el-table th.el-table__cell { background: #f8fafc; color: var(--text-secondary); font-weight: 600; }
+
+/* 内容区卡片：统一淡入 + 卡头字重（对齐 mall-admin 页面观感，零侵入覆盖全部列表页） */
+.el-main > .el-card {
+  animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header > span:first-child {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 12px;
+}
+
+.card-header > span:first-child::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
+}

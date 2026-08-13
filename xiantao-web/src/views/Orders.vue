@@ -164,18 +164,45 @@ function formatDate(dateStr) {
   margin-bottom: 20px;
 }
 
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  position: relative;
+  padding-left: 14px;
+}
+
+.header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
+}
+
 .order-list {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .order-item {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition-base);
 }
 
 .order-item:last-child {
   border-bottom: none;
+}
+
+.order-item:hover {
+  background: #f8fbff;
 }
 
 .order-header {
@@ -183,13 +210,13 @@ function formatDate(dateStr) {
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .order-no {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .order-content {
@@ -202,22 +229,22 @@ function formatDate(dateStr) {
 .product-image {
   width: 80px;
   height: 80px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #f5f5f5;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .no-image {
-  color: #999;
+  color: var(--text-light);
   font-size: 12px;
 }
 
@@ -228,12 +255,13 @@ function formatDate(dateStr) {
 .product-info h3 {
   font-size: 14px;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .price {
   font-size: 16px;
   font-weight: bold;
-  color: #f56c6c;
+  color: var(--danger-color);
 }
 
 .party-info {
@@ -243,12 +271,13 @@ function formatDate(dateStr) {
 
 .party-info .label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
   margin-bottom: 4px;
 }
 
 .party-info .name {
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .order-actions {
@@ -261,14 +290,14 @@ function formatDate(dateStr) {
   gap: 20px;
   padding: 12px 20px;
   font-size: 12px;
-  color: #999;
-  background: #fafafa;
+  color: var(--text-light);
+  background: #f8fafc;
 }
 
 .empty {
   text-align: center;
   padding: 60px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .pagination {

@@ -126,42 +126,55 @@ function getStatusText(status) {
   margin-bottom: 20px;
 }
 
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
 .product-list {
   background: #fff;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .product-item {
   display: flex;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition-base);
 }
 
 .product-item:last-child {
   border-bottom: none;
 }
 
+.product-item:hover {
+  background: #f8fbff;
+}
+
 .product-image {
   width: 100px;
   height: 100px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #f5f5f5;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .no-image {
-  color: #999;
+  color: var(--text-light);
   font-size: 12px;
 }
 
@@ -173,12 +186,13 @@ function getStatusText(status) {
 .product-info h3 {
   font-size: 16px;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .price {
   font-size: 18px;
   font-weight: bold;
-  color: #f56c6c;
+  color: var(--danger-color);
   margin-bottom: 8px;
 }
 
@@ -187,7 +201,7 @@ function getStatusText(status) {
   align-items: center;
   gap: 12px;
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .product-actions {
@@ -198,7 +212,7 @@ function getStatusText(status) {
 .empty {
   text-align: center;
   padding: 60px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .pagination {

@@ -127,7 +127,8 @@ export default {
 <style scoped>
 .address-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--app-canvas);
+  background-attachment: fixed;
   padding: 16px;
   padding-bottom: 70px;
 }

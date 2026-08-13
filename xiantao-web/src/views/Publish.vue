@@ -203,15 +203,19 @@ async function handleSubmit() {
 
 .publish-card {
   background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  max-width: 700px;
+  padding: 32px;
+  border-radius: var(--radius-md);
+  max-width: 720px;
   margin: 0 auto;
+  box-shadow: var(--shadow-sm);
 }
 
 .publish-card h2 {
   margin-bottom: 30px;
   text-align: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 1px;
 }
 
 .upload-area {

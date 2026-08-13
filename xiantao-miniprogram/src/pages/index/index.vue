@@ -2,6 +2,8 @@
   <div class="index-page">
     <div class="search-bar">
       <input
+        id="index-search"
+        name="keyword"
         v-model="keyword"
         placeholder="搜索商品"
         @keyup.enter="handleSearch"
@@ -142,7 +144,8 @@ export default {
 <style scoped>
 .index-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--app-canvas);
+  background-attachment: fixed;
   padding-bottom: 70px;
 }
 
